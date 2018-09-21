@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>宝石方块</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        #diamond {
+            position: absolute;
+            left: -10000px;
+        }
+        #preview {
+            float: left;
+            margin: 10px;
+        }
+        #game {
+            float: left;
+            margin: 10px;
+        }
+    </style>
+    <script>
+        var previewCTX;
+        var gameCTX;
+        var size = 60;
+        var gameMap = [
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1]
+        ];
+        var nextSquare = new Square(0, 0, [2, 3, 8]);
+        var currSquare;
+        var SX = 778;
+        var SY = 778;
+        var SW = 640;
+        var SH = 640;
+        var img;
+
+        function Square (x, y, squareArray) {
+            this.x = x;
+            this.y = y;
+            this.squareArray = squareArray;
+
+            this.change = function () {
+                for (var i = 0; i < this.squareArray.length - 1; i++) {
+                    var temp = this.squareArray[i];
+                    this.squareArray[i] = this.squareArray[i+1];
+                    this.squareArray[i+1] = temp;
+                }
+            }
+
+            this.moveLeft = function () {
+                if (this.x === 0 || gameMap[this.y + this.squareArray.length - 1][this.x - 1] !== -1) return;
+                this.x -= 1;
+            }
+
+            this.moveRight = function () {
+                if (this.x === this.squareArray[0].length - 1 || gameMap[this.y + this.squareArray.length - 1][this.x + 1] !== -1) return;
+                this.x += 1;
+            }
+
+            this.moveDown = function () {
+                if (this.y === this.squareArray.length - 1 || gameMap[this.y + this.squareArray.length][this.x] !== -1) {
+                    flashSquare();
+                }
+                this.y += 1;
+            }
+        }
+        
+        function flashSquare () {
+            
+        }
+        
+        function drawPreview () {
+            console.log(nextSquare)
+            for (var i = 0; i < nextSquare.squareArray.length; i++) {
+                previewCTX.drawImage(img, (nextSquare.squareArray[i]%3) * SX, Math.floor(nextSquare.squareArray[i]/3) * SY, SW, SH, nextSquare.x, nextSquare.y + size * i, size, size);
+            }
+        }
+
+        onload = function () {
+            var canvas1 = document.getElementById('preview');
+            var canvas2 = document.getElementById('game');
+
+            img = document.getElementById('diamond');
+
+            previewCTX = canvas1.getContext('2d');
+            gameCTX = canvas2.getContext('2d');
+
+            previewCTX.fillStyle = '#000';
+            gameCTX.fillStyle = '#000';
+
+            previewCTX.fillRect(0, 0, size + 40, size * 3 + 40);
+            gameCTX.fillRect(0, 0, size * (gameMap[0].length - 1), size * (gameMap.length - 1));
+
+            drawPreview();
+        }
+    </script>
+</head>
+<body>
+    <canvas id="preview" width="100" height="220"></canvas>
+    <canvas id="game" width="360" height="780"></canvas>
+    <img id="diamond" src="img/diamond.png">
+</body>
+</html>
